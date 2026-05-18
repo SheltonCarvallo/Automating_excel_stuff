@@ -1,9 +1,11 @@
+#!C:\Users\Shelton\anaconda3\envs\DataScienceEnv\python.exe
 import pandas as pd
 from openpyxl import load_workbook
 from pathlib import Path
 
 # ── Constants ────────────────────────────────────────────────────────────────
-INPUT_REPORT    = "NuevosParticipantes.xlsx"
+#INPUT_REPORT    = "NuevosParticipantes.xlsx"
+INPUT_REPORT    = "ReporteGeneralSpring2027.xls"
 INPUT_CI_FILE   = "CI_spring2026.txt"
 OUTPUT_PREFIX   = "EX_participantes"
 
@@ -12,7 +14,7 @@ COLUMNAS = [
     'Nombre', 'CI', 'Celular', 'Correo', 'Empleador', 'Posicion Laboral'
 ]
 
-PERFILES_FAKE = {"EMILY PRUEBA PRUEBA PRUEBA", "Ashly Prueba"}
+PERFILES_FAKE = {"Veronica Alejandra Ollage Velastegí", "CAMILA PRUEBA", "EMILY PRUEBA PRUEBA PRUEBA", "Ashly Prueba"}
 
 SEPARATOR = "=" * 120
 
@@ -150,5 +152,10 @@ def main() -> None:
         print(f"[ERROR] Al guardar el archivo: {e}")
 
 
+    print(len(ci_nuevos))
+    df_test = df.loc[df['CI'].isin(ci_nuevos)]
+    print(df_test)
+    print(df['CI'].duplicated().sum())
+    print(df.loc[df['CI'].duplicated()])
 if __name__ == "__main__":
     main()
