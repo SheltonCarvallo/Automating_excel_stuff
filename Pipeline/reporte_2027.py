@@ -4,7 +4,7 @@ import numpy as np
 from pathlib import Path
 
 PATH = "../raw_data/ReporteGeneral.xls"
-NO_FIRMADO_PATH = "../raw_data/SinFirmarContratro.xls"
+NO_FIRMADO_PATH = "../raw_data/SinFirmarContrato.xls"
 PRUEBA_INGLES_PATH = "../raw_data/Reporte prueba ingles.xlsx"
 
 OUTPUT_PATH = "../data_cleaned/ReporteSpring2027Cleaned.csv"
@@ -13,12 +13,12 @@ OUTPUT_PATH_PRUEBAS_INGLES = "../data_cleaned/PruebasIngles2027Cleaned.csv"
 
 SKIP_ROWS = 6
 SEPARATOR = "=" * 120
-COLUMNS_TO_DROP = ["Traslado", "Clave", "Nombre Amigo", "Con quien vieja", "Amigo Viaja",
+COLUMNS_TO_DROP_REPORTE_GENERAL = ["Traslado", "Clave", "Nombre Amigo", "Con quien vieja", "Amigo Viaja",
                    "DS160", "Tasa Consular", "Ademdum", "Prueba pagada", "Pago Inscripcion", "Pago Entrevista",
                    "Aprobacion Inscripcion", "Cuenta convisa", "Fecha emision visa", "Fecha expiracion visa", 
                    "Visa mision turista"]
 
-COLUMNS_TO_DROP_SIN_CONTRATO = ["Traslado", "Clave", "Nombre Amigo", "Con quien vieja", "Amigo Viaja",
+COLUMNS_TO_DROP_REPORTE_GENERAL_SIN_CONTRATO = ["Traslado", "Clave", "Nombre Amigo", "Con quien vieja", "Amigo Viaja",
                    "DS160", "Tasa Consular", "Ademdum", "Prueba pagada", "Pago Inscripcion", "Pago Entrevista",
                    "Aprobacion Inscripcion", "Cuenta convisa", "Fecha emision visa", "Fecha expiracion visa"]
 
@@ -69,7 +69,7 @@ def read_excel(excel_path: str, skip_rows: int) -> pd.DataFrame:
     return df
 
 
-def clean_df(df: pd.DataFrame, columns_to_drop: list[str] = None, celular: bool = True) -> pd.DataFrame:
+def clean_df(df: pd.DataFrame, COLUMNS_TO_DROP_REPORTE_GENERAL: list[str] = None, celular: bool = True) -> pd.DataFrame:
     "It's main goal is to clean a dataframe"
 
     if not isinstance(df, pd.DataFrame):
@@ -84,8 +84,8 @@ def clean_df(df: pd.DataFrame, columns_to_drop: list[str] = None, celular: bool 
     df = df.dropna(axis=1, how='all')
     df = df.dropna(axis=0, how='all')
     
-    if isinstance(columns_to_drop, list):
-        df = df.drop(columns=columns_to_drop)
+    if isinstance(COLUMNS_TO_DROP_REPORTE_GENERAL, list):
+        df = df.drop(columns=COLUMNS_TO_DROP_REPORTE_GENERAL)
 
     print("Seteando columnas numericas CI y Celular a columnas string, con el 0 por delante")
     df['CI'] = df['CI'].apply(pad_cedula_celular)
@@ -134,7 +134,7 @@ def main() -> None:
 
     print(SEPARATOR)
     try:
-        df = clean_df(df, COLUMNS_TO_DROP)
+        df = clean_df(df, COLUMNS_TO_DROP_REPORTE_GENERAL)
         print(df)
     except TypeError as e:
         print(f"[ERROR] al limpiar el dataframe => {e}")
@@ -170,7 +170,7 @@ def main() -> None:
     print(SEPARATOR)
     
     try:
-        df = clean_df(df, COLUMNS_TO_DROP_SIN_CONTRATO)
+        df = clean_df(df, COLUMNS_TO_DROP_REPORTE_GENERAL_SIN_CONTRATO)
         print(df)
     except TypeError as e:
         print(f"[ERROR] al limpiar el dataframe => {e}")
