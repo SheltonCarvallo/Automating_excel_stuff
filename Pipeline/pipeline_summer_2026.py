@@ -31,11 +31,8 @@ def find_datetime_columns_set_to_string(df) -> pd.DataFrame:
     mask = df.dtypes == "datetime64[ns]"
 
     time_columns = list(df.dtypes[mask].index)
-
-    print(time_columns)
-
+    
     for column in time_columns:
-        print(column)
         df[column] = df[column].apply(set_time_format)
     return df
     
@@ -47,6 +44,7 @@ def find_and_clean_str_columns(df) -> pd.DataFrame:
     str_columns = list(df.dtypes[mask].index)
     for column in str_columns:
         df[column] = df[column].str.strip()
+        df[column] = df[column].str.replace(r"\n|\r\n|\r", "", regex=True)
     return df
 
 def set_time_format(time: pd.Timestamp) -> str:
@@ -79,7 +77,7 @@ def clean_df(df: pd.DataFrame, COLUMNS_TO_DROP_REPORTE_GENERAL: list[str] = None
         raise ValueError(f"El DataFrame está vacío, no se puede limpiar")
     
     # Clean
-    print("Eliminando columnas innecesarias")
+    print("Eliminando columnas innecesarias..")
 
 
     if isinstance(COLUMNS_TO_DROP_REPORTE_GENERAL, list):
@@ -88,22 +86,22 @@ def clean_df(df: pd.DataFrame, COLUMNS_TO_DROP_REPORTE_GENERAL: list[str] = None
     df = df.dropna(axis=1, how='all')
     df = df.dropna(axis=0, how='all')
 
-    print("Seteando columnas numericas CI y Celular a columnas string, con el 0 por delante")
+    print("Seteando columnas numericas CI y Celular a columnas string, con el 0 por delante..")
     df['CI'] = df['CI'].apply(pad_cedula_celular)
     
     if celular:
         df['Celular'] = df['Celular'].apply(pad_cedula_celular)
 
-    print(f"Seteando columnas de tipo datetime64[ns] a strings")
+    print(f"Seteando columnas de tipo datetime64[ns] a strings..")
 
     df = find_datetime_columns_set_to_string(df)     
 
-    print("Eliminando espacios vacios por delante y detras de columnas string")
+    print("Eliminando espacios vacios por delante y detras de columnas string..")
     df = find_and_clean_str_columns(df)
     df['Nombre'] = df['Nombre'].str.lower()
 
     if df.empty:
-        raise ValueError("El DataFrame quedó vacío después de la limpieza")
+        raise ValueError("El DataFrame quedó vacío después de la limpieza..")
     return df 
 
 
@@ -155,7 +153,7 @@ def main() -> None:
     print(SEPARATOR)
 
     try:
-        print(df.loc[df['Nombre'] == "vivian carolina simbana catagna", ['Precio', 'Cualitativa']])
+        #print(df.loc[df['Nombre'] == "vivian carolina simbana catagna", ['Precio', 'Cualitativa']])
         save_csv(df, OUTPUT_PATH)
     except TypeError as e:
         print(f"[ERROR] al guardar el reporte excel en formato csv => {e}")
