@@ -80,12 +80,12 @@ def clean_df(df: pd.DataFrame, COLUMNS_TO_DROP_REPORTE_GENERAL: list[str] = None
     
     # Clean
     print("Eliminando columns innecesarias")
-
-    df = df.dropna(axis=1, how='all')
-    df = df.dropna(axis=0, how='all')
     
     if isinstance(COLUMNS_TO_DROP_REPORTE_GENERAL, list):
         df = df.drop(columns=COLUMNS_TO_DROP_REPORTE_GENERAL)
+
+    df = df.dropna(axis=1, how='all')
+    df = df.dropna(axis=0, how='all')
 
     print("Seteando columnas numericas CI y Celular a columnas string, con el 0 por delante")
     df['CI'] = df['CI'].apply(pad_cedula_celular)
@@ -93,12 +93,13 @@ def clean_df(df: pd.DataFrame, COLUMNS_TO_DROP_REPORTE_GENERAL: list[str] = None
     if celular:
         df['Celular'] = df['Celular'].apply(pad_cedula_celular)
 
+    print(f"Seteando columnas de tipo datetime64[ns] a strings")
+    df = find_datetime_columns_set_to_string(df)
+     
     print("Eliminando espacios vacios por delante y detras de columnas string")
     df = find_and_clean_str_columns(df)
     df['Nombre'] = df['Nombre'].str.lower()
 
-    print(f"Seteando columnas de tipo datetime64[ns] a strings")
-    df = find_datetime_columns_set_to_string(df) 
 
     if df.empty:
         raise ValueError("El DataFrame quedó vacío después de la limpieza")
